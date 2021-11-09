@@ -130,7 +130,7 @@ class _LoginState extends State<Login> {
     });
 
 
-    var url =Server.con+"/api/0x07/auth/login";
+    var url =Server.con+"/api-auth/login";
     
     var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
       'username': username.text,

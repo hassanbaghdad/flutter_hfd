@@ -49,73 +49,73 @@ class _MyDrawerState extends State<MyDrawer> {
   Widget build(BuildContext context) {
     get_login_state();
     return Drawer(child:
-    ListView(children: <Widget>[
+    Container(child: ListView(children: <Widget>[
 
       ListTile(
-        title: Text("الصفحة الرئيسية",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-        leading: Icon(Icons.home),
+        title: Text("الصفحة الرئيسية",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Icon(Icons.home,color: Colors.white,),
         onTap: ()async{
           Navigator.of(context).pushNamed("home");
 
         },),
-      Divider(thickness: 1,color: Colors.grey,),
+
       ListTile(
-        title: Text("خدمات المقاتلين",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-        leading: Icon(Icons.people_alt),
+        title: Text("خدمات المقاتلين",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Icon(Icons.people_alt,color: Colors.white),
         onTap: ()async{
           Navigator.of(context).pushNamed("services");
 
         },),
-      Divider(thickness: 1,color: Colors.grey,),
+
 
       hasLogin?Column(children: <Widget>[
-          ListTile(
-          title: Text("لوحة التحكم",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-            leading: Icon(Icons.admin_panel_settings),
-            onTap: (){
-              Navigator.of(context).pushNamed("dashboard");
-            },
-          ),
-          Divider(thickness: 1,color: Colors.grey,),
-          ListTile(
-          title: Text("تسجيل الخروج",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-          leading: Icon(Icons.logout),
+        ListTile(
+          title: Text("لوحة التحكم",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+          leading: Icon(Icons.admin_panel_settings,color: Colors.white),
+          onTap: (){
+            Navigator.of(context).pushNamed("dashboard");
+          },
+        ),
+
+        ListTile(
+          title: Text("تسجيل الخروج",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+          leading: Icon(Icons.logout,color: Colors.white),
           onTap: ()async{
             await logout();
 
           },
-          )
+        )
       ]
 
 
       ):ListTile(
-        title: Text("تسجيل الدخول",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-        leading: Icon(Icons.arrow_forward),
+        title: Text("تسجيل الدخول",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Icon(Icons.arrow_forward,color: Colors.white),
         onTap: (){
           Navigator.of(context).pushNamed("login");
         },
       ),
 
-      Divider(thickness: 1,color: Colors.grey,),
+
       ListTile(
-        title: Text("مشاركة التطبيق",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-        leading: Icon(Icons.share),
+        title: Text("مشاركة التطبيق",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Icon(Icons.share,color: Colors.white),
         onTap: ()async{
           Navigator.of(context).pushNamed("services");
 
         },),
-      Divider(thickness: 1,color: Colors.grey,),
+
       ListTile(
-        title: Text("تابعنا على",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-        leading: Icon(Icons.phonelink_ring),
+        title: Text("تابعنا على",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Icon(Icons.phonelink_ring,color: Colors.white),
         onTap: ()async{
           Navigator.of(context).pushNamed("services");
 
         },),
-      Divider(thickness: 1,color: Colors.grey,),
+
 
     ],
-    )
+    ),color: Colors.blueAccent,)
       ,);
   }
 }

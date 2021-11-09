@@ -4,6 +4,7 @@ import 'package:hfd_flutter/admin/Dashboard.dart';
 import 'package:hfd_flutter/admin/Login.dart';
 import 'package:hfd_flutter/admin_pages/Notifications.dart';
 import 'package:hfd_flutter/pages/ViewPost.dart';
+import 'package:hfd_flutter/services/Complaints.dart';
 import 'package:hfd_flutter/services/Salary.dart';
 import './pages/Home.dart';
 import 'soldiers/Services.dart';
@@ -39,6 +40,10 @@ class MyApp extends StatelessWidget {
         'salary':(context){
           return Salary();
         },
+        'complaints':(context){
+          return Complaints();
+        },
+
         'view':(context){
           return ViewPost();
         },

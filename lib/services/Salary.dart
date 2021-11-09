@@ -1,5 +1,8 @@
 import 'dart:developer';
-
+import 'package:hfd_flutter/Server.dart';
+import 'package:hfd_flutter/Store.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,7 +54,9 @@ class _SalaryState extends State<Salary> {
 
             ],
           ),
-          onPressed: (){},
+          onPressed: (){
+            get_salary();
+          },
         ),)
 
       ],
@@ -59,5 +64,23 @@ class _SalaryState extends State<Salary> {
       )
     ),
     ));
+  }
+  get_salary() async{
+    var qi ="1234567812345678";
+
+
+    var url =Server.con + "/api-mobile/services/get-salary";
+    var token = Store().getToken();
+    var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
+      'Authorization': 'Bearer $token',
+      'qi':'$qi',
+      'month':'10',
+      'year':'2021'
+
+    }),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },);
+
+    print(response.body);
   }
 }

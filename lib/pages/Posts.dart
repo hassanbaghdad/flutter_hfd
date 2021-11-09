@@ -8,7 +8,7 @@ class Posts{
   var token = Store().getToken();
   get_posts() async{
     print("geting");
-    var url =Server.con+"/api/0x07/posts/get-posts";
+    var url =Server.con+"/api-mobile/posts/get-posts";
     print(url);
     var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
       'Authorization': 'Bearer $token',
