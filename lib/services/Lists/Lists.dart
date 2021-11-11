@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:smart_select/smart_select.dart';
 
 class Lists {
+  var lis = <String>['one', 'two', 'Free', 'Four']
+      .map<DropdownMenuItem<String>>((String value) {
+  return DropdownMenuItem<String>(
+  value: value,
+  child: Text(value),
+  );
+  }).toList();
+
   List<S2Choice<String>> complaint_types = [
     S2Choice<String>(value: '1', title: 'شهيد'),
     S2Choice<String>(value: '2', title: 'جريح'),
