@@ -173,6 +173,37 @@ class Services extends StatelessWidget {
                 Navigator.of(context).pushNamed("complaints");
               },
             ),
+            InkWell(
+              child: Container(
+                  padding: EdgeInsets.all(0),
+                  child: Container(
+                      padding: EdgeInsets.fromLTRB(10,20,5,20),
+                      child:Center(
+                        child: Card(
+                          child: Center(child:Column(
+                            children: <Widget>[
+                              Container(
+                                  height: 102,
+                                  child:  Icon(Icons.mail_outline,size: 100,color: Colors.blue,)
+                              ),
+                              Container(
+                                color: Colors.green,
+                                height: 30,
+                                width: double.infinity,
+                                child: Text("صندوق الوارد",style: TextStyle(fontSize: 18,color: Colors.white),textAlign: TextAlign.center,),
+                              )
+                            ],
+                          ),
+                          ),
+                          elevation: 10,
+                        ),
+                      )
+                  )
+              ),
+              onTap: (){
+                Navigator.of(context).pushNamed("complaints");
+              },
+            ),
 
           ],
         ),

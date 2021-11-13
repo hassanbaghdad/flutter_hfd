@@ -17,7 +17,8 @@ class _PostsListState extends State<PostsList> {
   Widget build(BuildContext context) {
 
     return Container(
-      child: FutureBuilder(
+      child:
+      FutureBuilder(
           future: Posts().get_posts(),
           builder: (BuildContext context ,AsyncSnapshot snapshot){
             if(snapshot.hasData)

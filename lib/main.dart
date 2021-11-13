@@ -7,6 +7,7 @@ import 'package:hfd_flutter/pages/ViewPost.dart';
 import 'package:hfd_flutter/services/Complaints.dart';
 import 'package:hfd_flutter/services/Salary.dart';
 import 'package:hfd_flutter/services/Store/ComplaintStore.dart';
+import 'package:hfd_flutter/services/Store/SendSuccess.dart';
 import './pages/Home.dart';
 import 'soldiers/Services.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       create: (context)=> Model(),
       child: MaterialApp(
         title: "مديرية الشؤون المالية",
-        home: Home(),
+        home: Login(),
         debugShowCheckedModeBanner: true,
         routes: {
           'home':(context){
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
           },
           'complaints':(context){
             return Complaints();
+          },
+          'send_complaint_success':(context){
+            return SendComplaintSuccess();
           },
 
           'view':(context){

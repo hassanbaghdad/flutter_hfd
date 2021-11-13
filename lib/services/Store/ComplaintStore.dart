@@ -5,14 +5,14 @@ import 'package:smart_select/smart_select.dart';
 
 class Model extends ChangeNotifier
 {
-  String complaint_type ="مخصصات" ;
+  String complaint_type ="موضوع الشكوى" ;
   String complaint_text ="" ;
   String complaint_soldier_name ="" ;
   String mother_name ="" ;
   String complaint_soldier_qi ="" ;
   String complaint_soldier_phone ="" ;
   String formation ="" ;
-  String place_birthday ="" ;
+  String place_birthday ="بغداد" ;
   String birthday_date ="" ;
   String marital_state ="" ;
   String husband_name ="" ;
@@ -61,10 +61,10 @@ class Model extends ChangeNotifier
     notifyListeners();
   }
 
-  changeComplaint(str)
+  changePlaceBirthday(str)
   {
     print(str);
-    complaint_type = str;
+    place_birthday = str;
     notifyListeners();
   }
   changeText(str)

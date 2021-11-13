@@ -5,6 +5,7 @@ import 'package:hfd_flutter/pages/Posts.dart';
 import 'package:hfd_flutter/pages/PostsList.dart';
 import '../components/Drawer.dart';
 import '../pages/Carousel.dart';
+import 'package:badges/badges.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,8 +16,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    final screenHight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
+
 
 
     return Directionality(textDirection: TextDirection.rtl, child:
@@ -24,6 +24,16 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text("الصفحة الرئيسية"),
         centerTitle: true,
+        actions: <Widget>[
+          Container(
+            padding: EdgeInsets.all(15),
+            child:Badge(
+              badgeContent: Text('1',style: TextStyle(color: Colors.white),),
+              child: Icon(Icons.mail),
+
+            )
+          )
+        ],
         leading:Builder(
           builder: (context) => IconButton(
             icon: new Icon(Icons.menu),

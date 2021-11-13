@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././Store.dart';
+import 'package:badges/badges.dart';
+
 class MyDrawer extends StatefulWidget {
   @override
   _MyDrawerState createState() => _MyDrawerState();
@@ -66,6 +68,17 @@ class _MyDrawerState extends State<MyDrawer> {
           Navigator.of(context).pushNamed("services");
 
         },),
+      ListTile(
+        title: Text("صندوق الوارد",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+        leading: Badge(
+          badgeContent: Text('1',style: TextStyle(color: Colors.white),),
+          child: Icon(Icons.mail,color: Colors.white,),
+
+        ),
+        onTap: ()async{
+          Navigator.of(context).pushNamed("services");
+
+        },),
 
 
       hasLogin?Column(children: <Widget>[
@@ -115,7 +128,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
     ],
-    ),color: Colors.blueAccent,)
+    ),color: Colors.green,)
       ,);
   }
 }

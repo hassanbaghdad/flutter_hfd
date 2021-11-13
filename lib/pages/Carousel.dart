@@ -50,19 +50,17 @@ class _MyCarouselState extends State<MyCarousel> {
 
                                   ,
                                   Positioned(child: Container(
-                                    height: 60,
+                                    height: 40,
                                     width: double.infinity,
                                     padding: EdgeInsets.all(10),
                                     //color: Colors.red.withOpacity(0.8),
                                     margin: EdgeInsets.fromLTRB(20,140,0,0),
                                     child: Row(children: <Widget>[
-                                      Icon(Icons.arrow_left_rounded,textDirection: TextDirection.ltr,size: 40,color: Colors.white,),
-                                      Expanded(child: Text(snapshot.data[x]["post_title"],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.right,))
+                                      Icon(Icons.arrow_left_rounded,textDirection: TextDirection.ltr,size: 25,color: Colors.white,),
+                                      Expanded(child: Text(snapshot.data[x]["post_title"],style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.right,))
                                     ],),
                                     decoration: BoxDecoration(
-                                        color: Colors.green.withOpacity(0.8),
-                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(50)),
-                                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5),spreadRadius: 3,blurRadius: 5)]
+                                        color: Colors.red.withOpacity(0.8),
                                     ),
                                   )
                                   ),
