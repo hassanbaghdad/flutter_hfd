@@ -217,7 +217,7 @@ class _scafState extends State<scaf> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
    
-    complaint_soldier_qi.text = "6330154504416036";
+    complaint_soldier_qi.text = "6330155680692969";
     String _email;
     String _password;
 
@@ -422,7 +422,7 @@ class _scafState extends State<scaf> {
                   margin: EdgeInsets.all(20),
                   child: RaisedButton(
                     color: Colors.blue,
-                    child: sending?CircularProgressIndicator(color: Colors.white,):Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Icon(Icons.send,color: Colors.white),
@@ -637,7 +637,7 @@ class _scafState extends State<scaf> {
 
       }
       print(complaint_soldier_qi.text);
-      var url =Server.con + "/api-site/services/send-complaints";
+      var url =Server.con + "/api-mobile/services/send-complaints";
       var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
         'complaint_type':model.complaint_type,
         'complaint_soldier_name':complaint_soldier_name.text,
