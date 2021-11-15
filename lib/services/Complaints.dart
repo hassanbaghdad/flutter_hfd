@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hfd_flutter/Server.dart';
@@ -78,16 +78,16 @@ class _scafState extends State<scaf> {
   TextEditingController residence_card_no = new TextEditingController();
   TextEditingController residence_card_date = new TextEditingController();
 
-   File soldier_id_front = File("");
-   File  soldier_id_back= File("");
-   File  husband_id_front= File("");
-   File  husband_id_back= File("");
-   File  child_id_front= File("");
-   File  child_id_back= File("");
-   File  contract= File("");
-   File  long_card= File("");
-   File  resident_card_front= File("");
-   File  resident_card_back= File("");
+   File?  soldier_id_front;
+   File?  soldier_id_back;
+   File?  husband_id_front;
+   File?  husband_id_back;
+   File?  child_id_front;
+   File?  child_id_back;
+   File?  contract;
+   File?  long_card;
+   File?  resident_card_front;
+   File?  resident_card_back;
 
   Future pickCameraSoldierIdFront() async {
     final myfile = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -212,12 +212,11 @@ class _scafState extends State<scaf> {
       long_card = File(myfile!.path);
     });
   }
-
   @override
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
    
-    complaint_soldier_qi.text = "6330155680692969";
+    complaint_soldier_qi.text = "6330153145574658";
     String _email;
     String _password;
 
@@ -388,29 +387,6 @@ class _scafState extends State<scaf> {
                       SetDoc("عقد الزواج", "https://hfd.gov.iq/img/3.aca66164.png", contract, pickCameraContract, pickGalleryContract), Divider(thickness: 1,),
                       SetDoc("البطاقة التموينية", "https://hfd.gov.iq/img/5.022d1913.png", long_card, pickCameraLongCard, pickGalleryLongCard), Divider(thickness: 1,),
 
-
-                      // TileImage("ظهر جنسية او هوية المقاتل",
-                      //     "https://hfd.gov.iq/img/2.86098a9a.png"),
-                      // Divider(
-                      //   thickness: 1,
-                      // ),
-                      // TileImage("وجه جنسية او هوية الزوج/ة",
-                      //     "https://hfd.gov.iq/img/1.0d223e24.png"),
-                      // Divider(
-                      //   thickness: 1,
-                      // ),
-                      // TileImage("ظهر جنسية او هوية الزوج/ة",
-                      //     "https://hfd.gov.iq/img/2.86098a9a.png"),
-                      // Divider(
-                      //   thickness: 1,
-                      // ),
-                      // TileImage("وجه بطاقة السكن",
-                      //     "https://hfd.gov.iq/img/4.486ee720.png"),
-                      // Divider(
-                      //   thickness: 1,
-                      // ),
-                      // TileImage("ظهر بطاقة السكن",
-                      //     "https://hfd.gov.iq/img/6.1ded7f67.png"),
                     ],
                   ),
                 ):SizedBox(),
@@ -433,7 +409,7 @@ class _scafState extends State<scaf> {
                       print(model.academic);
 
                       if (_formKey.currentState!.validate()) {
-                        sendComplaint();
+                          sendComplaint();
                       }
                     },
                   ),
@@ -560,7 +536,6 @@ class _scafState extends State<scaf> {
     );
   }
 
-
   Container SetDoc(String _title, String _url,dynamic doc,Future pickCamera(),Future pickGallery()) {
     return Container(
       margin: EdgeInsets.only(top: 10),
@@ -599,7 +574,6 @@ class _scafState extends State<scaf> {
       ),
     );
   }
-
   Container Textbox(String _label, Icon _icon , TextEditingController _controller) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -622,55 +596,84 @@ class _scafState extends State<scaf> {
     );
   }
 
-   sendComplaint() async
+  sendComplaint() async
   {
-    try{
-      var model = Provider.of<Model>(context,listen: false);
-      setState(() {
-        sending = true;
-      });
-
+    var model = Provider.of<Model>(context,listen: false);
       for(int i = 0 ; i<=6 ; i++)
       {
         Codec<String, String> stringToBase64 = utf8.fuse(base64);
         complaint_soldier_qi.text = stringToBase64.encode(complaint_soldier_qi.text);
-
       }
-      print(complaint_soldier_qi.text);
+      complaint_soldier_qi.text = "6330153145574658";
       var url =Server.con + "/api-mobile/services/send-complaints";
-      var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
-        'complaint_type':model.complaint_type,
-        'complaint_soldier_name':complaint_soldier_name.text,
-        'complaint_soldier_qi':complaint_soldier_qi.text,
-        'mother_name':mother_name.text,
-        'formation':formation.text,
-        'complaint_text':complaint_text.text,
-        'soldier_id_front':base64Encode(soldier_id_front.readAsBytesSync()),
-        'soldier_id_back':base64Encode(soldier_id_back.readAsBytesSync()),
-        'husband_id_front':base64Encode(husband_id_front.readAsBytesSync()),
-        'husband_id_back':base64Encode(husband_id_back.readAsBytesSync()),
-        'child_id_front':base64Encode(child_id_front.readAsBytesSync()),
-        'child_id_back':base64Encode(child_id_back.readAsBytesSync()),
-        'residence_card_front':base64Encode(resident_card_front.readAsBytesSync()),
-        'residence_card_back':base64Encode(resident_card_back.readAsBytesSync()),
-        'contract':base64Encode(contract.readAsBytesSync()),
-        'long_card':base64Encode(long_card.readAsBytesSync()),
+      var request = http.MultipartRequest('POST',Uri.parse(url));
+      request.fields['complaint_soldier_qi'] = complaint_soldier_qi.text;
+      request.fields['complaint_type'] = model.complaint_type;
+      request.fields['complaint_soldier_name'] = complaint_soldier_name.text;
+      request.fields['mother_name'] = mother_name.text;
+      request.fields['formation'] = formation.text;
+      request.fields['complaint_soldier_phone'] = complaint_soldier_phone.text;
+      request.fields['place_birthday'] =model.place_birthday;
+      request.fields['birthday_date'] =model.birthday_date;
+      request.fields['marital_state'] =model.marital_state;
+      request.fields['husband_name'] =husband_name.text;
+      request.fields['job_state'] =job_state.text;
+      request.fields['wifes_count'] =wifes_count.text;
+      request.fields['children_count'] =children_count.text;
+      request.fields['academic'] =academic.text;
+      request.fields['purview'] =academic.text;
+      request.fields['university'] =university.text;
+      request.fields['college'] =college.text;
+      request.fields['section'] =section.text;
+      request.fields['city'] =city.text;
+      request.fields['area'] =area.text;
+      request.fields['nearest_point'] =nearest_point.text;
+      request.fields['last_job'] =last_job.text;
+      request.fields['religion'] =religion.text;
+      request.fields['nat_id_no'] =nat_id_no.text;
+      request.fields['nat_id_date'] =nat_id_date.text;
+      request.fields['nat_id_issuer'] =nat_id_issuer.text;
+      request.fields['civil_id_no'] =civil_id_no.text;
+      request.fields['civil_id_newspaper_no'] =civil_id_newspaper_no.text;
+      request.fields['civil_record_no'] =civil_record_no.text;
+      request.fields['civil_issuer_date'] =civil_issuer_date.text;
+      request.fields['residence_card_no'] =residence_card_no.text;
+      request.fields['residence_card_date'] =residence_card_date.text;
 
-      }),headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },);
-      print(response.body);
-      var res = jsonDecode(response.body);
-      setState(() {
-        msg = res["msg"];
+
+      request.files.add(await http.MultipartFile.fromPath("soldier_id_front",soldier_id_front!= null?soldier_id_front!.path:""));
+      request.files.add(await http.MultipartFile.fromPath("soldier_id_back", soldier_id_back!.path));
+      request.files.add(await http.MultipartFile.fromPath("husband_id_front", husband_id_front!.path));
+      request.files.add(await http.MultipartFile.fromPath("husband_id_back", husband_id_back!.path));
+      request.files.add(await http.MultipartFile.fromPath("child_id_front", child_id_front!.path));
+      request.files.add(await http.MultipartFile.fromPath("child_id_back", child_id_back!.path));
+      request.files.add(await http.MultipartFile.fromPath("residence_card_front", resident_card_front!.path));
+      request.files.add(await http.MultipartFile.fromPath("residence_card_back", resident_card_back!.path));
+      request.files.add(await http.MultipartFile.fromPath("contract", contract!.path));
+      request.files.add(await http.MultipartFile.fromPath("long_card", long_card!.path));
+
+
+      request.headers.addAll({
+        'Content-Type': 'application/json; charset=UTF-8'
       });
-      if(res["msg"] =="تم الارسال بنجاح")
-        {
-          Navigator.of(context).pushNamed("send_complaint_success");
-        }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      print(response.body);
+      final result = jsonDecode(response.body);
+// as Map<String, dynamic>
+      print(result);
+      //var res = jsonDecode(response.body);
+      setState(() {
+       // msg = res["msg"];
+      });
+      // if(res["msg"] =="تم الارسال بنجاح")
+      //  {
+      //    Navigator.of(context).pushNamed("send_complaint_success");
+      //  }
       // msg = response.body;
       Fluttertoast.showToast(
-        msg: res["msg"],
+        msg: "ttt",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
@@ -679,13 +682,6 @@ class _scafState extends State<scaf> {
         fontSize: 18,
       );
       sending = false;
-    }catch(e)
-    {
-      sending = false;
-      print(e);
-    }finally{
-      sending = false;
-    }
   }
 
 
