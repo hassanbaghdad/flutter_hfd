@@ -7,18 +7,9 @@ import '../components/Drawer.dart';
 import '../pages/Carousel.dart';
 import 'package:badges/badges.dart';
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-
-class _HomeState extends State<Home> {
+class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-
-
     return Directionality(textDirection: TextDirection.rtl, child:
     Scaffold(
       appBar: AppBar(
@@ -26,12 +17,12 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         actions: <Widget>[
           Container(
-            padding: EdgeInsets.all(15),
-            child:Badge(
-              badgeContent: Text('1',style: TextStyle(color: Colors.white),),
-              child: Icon(Icons.mail),
+              padding: EdgeInsets.all(15),
+              child:Badge(
+                badgeContent: Text('1',style: TextStyle(color: Colors.white),),
+                child: Icon(Icons.mail),
 
-            )
+              )
           )
         ],
         leading:Builder(
@@ -58,7 +49,7 @@ class _HomeState extends State<Home> {
           Expanded(child: PostsList(),)
 
 
-      ,
+          ,
 
 
 
@@ -72,3 +63,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+

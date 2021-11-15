@@ -14,22 +14,22 @@ class Model extends ChangeNotifier
   String formation ="" ;
   String place_birthday ="بغداد" ;
   String birthday_date ="" ;
-  String marital_state ="" ;
+  String marital_state ="اعزب/باكر" ;
   String husband_name ="" ;
   String job_state ="" ;
-  String wifes_count ="" ;
-  String children_count ="" ;
-  String academic ="" ;
+  String wifes_count ="1" ;
+  String children_count ="0" ;
+  String academic ="أمي" ;
   String purview ="" ;
   String university ="" ;
   String college ="" ;
   String section ="" ;
-  String city ="" ;
+  String city ="بغداد" ;
   String area ="" ;
   String nearest_point ="" ;
   String last_job ="" ;
-  String religion ="" ;
-  String id_type ="" ;
+  String religion ="مسلم" ;
+  String id_type ="هوية الاحوال المدنية" ;
   String nat_id_no ="" ;
   String nat_id_date ="" ;
   String nat_id_issuer ="" ;
@@ -63,81 +63,46 @@ class Model extends ChangeNotifier
 
   changePlaceBirthday(str)
   {
-    print(str);
     place_birthday = str;
     notifyListeners();
   }
-  changeText(str)
+  changeWifesCount(str)
   {
-    text = str;
+    wifes_count = str;
+    notifyListeners();
+  }
+  changeChildrenCount(str)
+  {
+    children_count = str;
     notifyListeners();
   }
 
-  List<S2Choice<String>> complaint_types = [
-    S2Choice<String>(value: 'شهيد', title: 'شهيد'),
-    S2Choice<String>(value: 'جريح', title: 'جريح'),
-    S2Choice<String>(value: 'ايقاف راتب', title: 'ايقاف راتب'),
-    S2Choice<String>(value: 'مخصصات', title: 'مخصصات'),
-    S2Choice<String>(value: 'نفقة', title: 'نفقة'),
-    S2Choice<String>(value: 'بطاقة كي كارد', title: 'بطاقة كي كارد'),
-    S2Choice<String>(value: 'اخرى', title: 'اخرى'),
-  ];
+  changeCity(str)
+  {
+    city = str;
+    notifyListeners();
+  }
 
-  List<S2Choice<String>>cities = [
-    S2Choice<String>(value: 'بغداد', title: 'بغداد'),
-    S2Choice<String>(value: 'بابل', title: 'بابل'),
-    S2Choice<String>(value: 'كربلاء', title: 'كربلاء'),
-    S2Choice<String>(value: 'البصرة', title: 'البصرة'),
-    S2Choice<String>(value: 'النجف', title: 'النجف'),
-    S2Choice<String>(value: 'القادسية', title: 'القادسية'),
-    S2Choice<String>(value: 'ذي قار', title: 'ذي قار'),
-    S2Choice<String>(value: 'نينوى', title: 'نينوى'),
-    S2Choice<String>(value: 'صلاح الدين', title: 'صلاح الدين'),
-    S2Choice<String>(value: 'كركوك', title: 'كركوك'),
-    S2Choice<String>(value: 'ديالى', title: 'ديالى'),
-    S2Choice<String>(value: 'الانبار', title: 'الانبار'),
-    S2Choice<String>(value: 'ميسان', title: 'ميسان'),
-    S2Choice<String>(value: 'واسط', title: 'واسط'),
-    S2Choice<String>(value: 'المثنى', title: 'المثنى'),
-    S2Choice<String>(value: 'ابربيل', title: 'اربيل'),
-    S2Choice<String>(value: 'دهوك', title: 'دهوك'),
-    S2Choice<String>(value: 'سليمانية', title: 'سليمانية'),
-  ];
-
-  List<S2Choice<String>> marital_states = [
-    S2Choice<String>(value: '1', title: 'اعزب / باكر'),
-    S2Choice<String>(value: '2', title: 'متزوج / ة'),
-    S2Choice<String>(value: '3', title: 'مطلق / ة'),
-    S2Choice<String>(value: '4', title: 'ارمل / ة'),
-  ];
-
-  List<S2Choice<String>> learns = [
-    S2Choice<String>(value: 'أمي', title: 'أمي'),
-    S2Choice<String>(value: 'يقرأ ويكتب', title: 'يقرأ ويكتب'),
-    S2Choice<String>(value: 'ابتدائية', title: 'ابتدائية'),
-    S2Choice<String>(value: 'متوسطة', title: 'متوسطة'),
-    S2Choice<String>(value: 'اعدادية', title: 'اعدادية'),
-    S2Choice<String>(value: 'دبلوم', title: 'دبلوم'),
-    S2Choice<String>(value: 'حوزوي', title: 'حوزوي'),
-    S2Choice<String>(value: 'بكالوريوس', title: 'بكالوريوس'),
-    S2Choice<String>(value: 'ماجستير', title: 'ماجستير'),
-    S2Choice<String>(value: 'دكتوراه', title: 'دكتوراه'),
-  ];
+  changeMaritalState(str)
+  {
+    marital_state = str;
+    notifyListeners();
+  }
    changeLearn(str)
   {
     academic = str;
     notifyListeners();
   }
-  List<S2Choice<String>> religions = [
-    S2Choice<String>(value: '1', title: 'مسلم'),
-    S2Choice<String>(value: '2', title: 'مسيحي'),
-    S2Choice<String>(value: '3', title: 'صابئي'),
-    S2Choice<String>(value: '4', title: 'ايزيدي'),
-    S2Choice<String>(value: '4', title: 'اخرى'),
-  ];
-  List<S2Choice<String>> id_types = [
-    S2Choice<String>(value: '1', title: 'هوية الاحوال المدنية'),
-    S2Choice<String>(value: '2', title: 'البطاقة الوطنية الموحدة'),
-  ];
+  changeReligion(str)
+  {
+    religion = str;
+    notifyListeners();
+  }
+  changeIdType(str)
+  {
+    id_type = str;
+    notifyListeners();
+  }
+
 
 }

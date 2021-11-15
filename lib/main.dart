@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       create: (context)=> Model(),
       child: MaterialApp(
         title: "مديرية الشؤون المالية",
-        home: Login(),
+        home: Home(),
         debugShowCheckedModeBanner: true,
         routes: {
           'home':(context){

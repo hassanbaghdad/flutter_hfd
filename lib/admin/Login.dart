@@ -131,7 +131,7 @@ class _LoginState extends State<Login> {
 
 
     var url =Server.con+"/api-auth/login";
-    
+    print(url);
     var response = await http.post(Uri.parse(url),body: jsonEncode(<String, String>{
       'username': username.text,
       'password': password.text,
@@ -142,6 +142,7 @@ class _LoginState extends State<Login> {
     setState(() {
       isLodaing = false;
     });
+    print(response.body);
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       print("success");
@@ -153,7 +154,7 @@ class _LoginState extends State<Login> {
         error = true;
 
       });
-      print(response.statusCode);
+
 
       Fluttertoast.showToast(
           msg: "اسم المستخدم او كلمة المرور غير صحيحة",

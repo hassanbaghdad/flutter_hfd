@@ -1,5 +1,4 @@
 import 'dart:ffi';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hfd_flutter/Server.dart';
@@ -15,6 +14,8 @@ import 'package:image_picker/image_picker.dart';
 import 'Lists/CitiesList.dart';
 import 'package:mdi/mdi.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 class Complaints extends StatefulWidget {
   @override
@@ -37,6 +38,15 @@ class scaf extends StatefulWidget {
   _scafState createState() => _scafState();
 }
 
+
+Future<File> getImageFileFromAssets(String path) async {
+  final byteData = await rootBundle.load('assets/$path');
+
+  final file = File('${(await getTemporaryDirectory()).path}/$path');
+  await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+  return file;
+}
 class _scafState extends State<scaf> {
 
 
@@ -78,16 +88,16 @@ class _scafState extends State<scaf> {
   TextEditingController residence_card_no = new TextEditingController();
   TextEditingController residence_card_date = new TextEditingController();
 
-   File?  soldier_id_front;
-   File?  soldier_id_back;
-   File?  husband_id_front;
-   File?  husband_id_back;
-   File?  child_id_front;
-   File?  child_id_back;
-   File?  contract;
-   File?  long_card;
-   File?  resident_card_front;
-   File?  resident_card_back;
+     File  soldier_id_front =new File("");
+     File  soldier_id_back=new File("");
+   File  husband_id_front=new File("");
+   File  husband_id_back=new File("");
+   File  child_id_front=new File("");
+   File  child_id_back=new File("");
+   File contract=new File("");
+   File  long_card=new File("");
+   File  resident_card_front=new File("");
+   File  resident_card_back=new File("");
 
   Future pickCameraSoldierIdFront() async {
     final myfile = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -95,6 +105,7 @@ class _scafState extends State<scaf> {
       soldier_id_front = File(myfile!.path);
       print(soldier_id_front);
     });
+
   }
   Future pickGallerySoldierIdFront() async {
     final myfile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -212,18 +223,31 @@ class _scafState extends State<scaf> {
       long_card = File(myfile!.path);
     });
   }
+  bool haveChildren = false;
+   checkChildrenCount(String str)
+  {
+    try{
+      if(int.parse(str) > 0 )
+      {
+        setState(() {
+          haveChildren = true;
+        });
+
+      }
+    }catch(e)
+    {
+      setState(() {
+        haveChildren = false;
+      });
+    }
+
+  }
   @override
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Widget build(BuildContext context) {
    
-    complaint_soldier_qi.text = "6330153145574658";
-    String _email;
-    String _password;
+    //complaint_soldier_qi.text = "6330159718063060";
 
-    String status = '';
-    String base64Image;
-
-    String errMessage = 'Error Uploading Image';
 
     var model = Provider.of<Model>(context);
     return Scaffold(
@@ -248,172 +272,181 @@ class _scafState extends State<scaf> {
                     ],
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.all(5),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('معلومات المقاتل'),
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: TextFormField(
-                        controller: complaint_soldier_name,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'لايمكن ترك هذا الحقل فارغا';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(borderSide: BorderSide(width: 2)),
-                          label: Text("اسم المقاتل"),
-                          //prefixIcon: _icon
-                        ),
-                        textAlign: TextAlign.center,
-                      ),),
-                     Textbox("اسم الام الثلاثي", Icon(Icons.info),mother_name),
-                      model.complaint_type=='مخصصات'?DropdownPlaceBirthday(context):SizedBox(),
-                      model.complaint_type=='مخصصات'?DatePicker(model.birthday_date, "المواليد"):SizedBox(),
-                      Textbox("رقم الهاتف", Icon(Icons.phone),complaint_soldier_phone),
-                      Textbox("اسم التشكيل", Icon(Icons.info),formation),
-                      Textbox("رقم بطاقة الكي كارد", Icon(Icons.credit_card),complaint_soldier_qi),
-                    ],
-                  ),
-                ),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('معلومات الزوجية'),
-                      Textbox("عدد الزوجات", Icon(Mdi.humanFemale),wifes_count),
-                      Textbox("عدد الاطفال", Icon(Icons.info),children_count),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('التعليم'),
-                      Textbox("الكلية", Icon(Icons.apartment),college),
-                      Textbox("الاختصاص", Icon(Icons.apartment),purview),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('عنوان السكن الحالي'),
-
-                      Textbox("المنطقة", Icon(Mdi.map),area),
-                      Textbox(
-                          "اقرب نقطة دالة", Icon(Icons.add_location_rounded),nearest_point),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('العمل السابق والديانة'),
-                     Textbox("العمل السابق", Icon(Icons.info),last_job),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('المعلمومات الشخصية'),
-
-                      Textbox("رقم البطاقة", Icon(Icons.credit_card),nat_id_no),
-                      Textbox("جهة الاصدار", Icon(Icons.info),nat_id_issuer),
-                      Textbox("رقم الهوية", Icon(Icons.credit_card),civil_id_no),
-                      Textbox("رقم الصحيفة", Icon(Icons.info),civil_id_newspaper_no),
-                      Textbox("رقم السجل", Icon(Icons.info),civil_record_no),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'? Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('بطاقة السكن'),
-                      Textbox("رقم البطاقة", Icon(Icons.credit_card),residence_card_no),
-                      DatePicker(model.residence_card_date, "المواليد"),
-                    ],
-                  ),
-                ):SizedBox(),
-                model.complaint_type=='مخصصات'?Container(
-                  margin: const EdgeInsets.all(10),
-                  padding: const EdgeInsets.all(3.0),
-                  decoration:
-                      BoxDecoration(border: Border.all(color: Colors.black12)),
-                  child: Column(
-                    children: <Widget>[
-                      Text('اضافة مستمسكات'),
-                      Divider(
-                        thickness: 1,
-                      ),
-                      SetDoc("وجه جنسية او هوية المقاتل", "https://hfd.gov.iq/img/1.0d223e24.png", soldier_id_front, pickCameraSoldierIdFront, pickGallerySoldierIdFront), Divider(thickness: 1,),
-                      SetDoc("ظهر جنسية او هوية المقاتل", "https://hfd.gov.iq/img/2.86098a9a.png", soldier_id_back, pickCameraSoldierIdBack, pickGallerySoldierIdBack), Divider(thickness: 1,),
-                      SetDoc("وجه جنسية او هوية الزوج/ة", "https://hfd.gov.iq/img/1.0d223e24.png", husband_id_front, pickCameraHusbandIdFront, pickGalleryHusbandIdFront), Divider(thickness: 1,),
-                      SetDoc("وجه جنسية او هوية الزوج/ة", "https://hfd.gov.iq/img/2.86098a9a.png", husband_id_back, pickCameraHusbandIdBack, pickGalleryHusbandIdBack), Divider(thickness: 1,),
-                      SetDoc("وجه جنسية او هوية الطفل", "https://hfd.gov.iq/img/1.0d223e24.png", child_id_front, pickCameraChildIdFront, pickGalleryChildIdFront), Divider(thickness: 1,),
-                      SetDoc("ظهر جنسية او هوية الطفل", "https://hfd.gov.iq/img/2.86098a9a.png", child_id_back, pickCameraChildIdBack, pickGalleryChildIdBack), Divider(thickness: 1,),
-                      SetDoc("وجه بطاقة السكن", "https://hfd.gov.iq/img/4.486ee720.png", resident_card_front, pickCameraResidenceFront, pickGalleryResidenceFront), Divider(thickness: 1,),
-                      SetDoc("ظهر بطاقة السكن", "https://hfd.gov.iq/img/6.1ded7f67.png", resident_card_back, pickCameraResidenceBack, pickGalleryResidenceBack), Divider(thickness: 1,),
-                      SetDoc("عقد الزواج", "https://hfd.gov.iq/img/3.aca66164.png", contract, pickCameraContract, pickGalleryContract), Divider(thickness: 1,),
-                      SetDoc("البطاقة التموينية", "https://hfd.gov.iq/img/5.022d1913.png", long_card, pickCameraLongCard, pickGalleryLongCard), Divider(thickness: 1,),
-
-                    ],
-                  ),
-                ):SizedBox(),
-
-                // simple usage
-
-                Container(
-                  color: Colors.blue,
-                  margin: EdgeInsets.all(20),
-                  child: RaisedButton(
-                    color: Colors.blue,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                model.complaint_type!='موضوع الشكوى'?Column(children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
                       children: <Widget>[
-                        Icon(Icons.send,color: Colors.white),
-                        Text("ارسال",style: TextStyle(fontSize: 18,color: Colors.white),)
+                        Text('معلومات المقاتل'),
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          child: TextFormField(
+                            controller: complaint_soldier_name,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'لايمكن ترك هذا الحقل فارغا';
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderSide: BorderSide(width: 2)),
+                              label: Text("اسم المقاتل"),
+                              //prefixIcon: _icon
+                            ),
+                            textAlign: TextAlign.center,
+                          ),),
+                        Textbox("اسم الام الثلاثي", Icon(Icons.info),mother_name),
+                        model.complaint_type=='مخصصات'?DropdownPlaceBirthday(context):SizedBox(),
+                        model.complaint_type=='مخصصات'?DatePicker(model.birthday_date, "المواليد"):SizedBox(),
+                        Textbox("رقم الهاتف", Icon(Icons.phone),complaint_soldier_phone),
+                        Textbox("اسم التشكيل", Icon(Icons.info),formation),
+                        Textbox("رقم بطاقة الكي كارد", Icon(Icons.credit_card),complaint_soldier_qi),
                       ],
                     ),
-                    onPressed: () {
-                      print(model.academic);
-
-                      if (_formKey.currentState!.validate()) {
-                          sendComplaint();
-                      }
-                    },
                   ),
-                )
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('معلومات الزوجية'),
+                        DropdownMaritalState(context),
+                        model.marital_state =='متزوج/ة'?Textbox("اسم الزوج/ة", Icon(Mdi.humanFemale),husband_name):SizedBox(),
+                        model.marital_state =='متزوج/ة'?Textbox("الحالة الوظيفية للزوج/ة", Icon(Mdi.humanFemale),job_state):SizedBox(),
+                        model.marital_state =='متزوج/ة'?DropdownWifesCount(context):SizedBox(),
+                        model.marital_state !='اعزب/باكر'?DropdownChildrenCount(context):SizedBox(),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('التعليم'),
+                        DropdownLearn(context),
+                        model.complaint_type!=''&& model.academic =='دبلوم' || model.academic =='بكالوريوس' || model.academic =='ماجستير' ||model.academic =='دكتوراه'? Textbox("الجامعة", Icon(Icons.apartment),university):SizedBox(),
+                        model.complaint_type!=''&& model.academic =='دبلوم' || model.academic =='بكالوريوس' || model.academic =='ماجستير' ||model.academic =='دكتوراه'? Textbox("الكلية", Icon(Icons.apartment),college):SizedBox(),
+                        model.complaint_type!=''&& model.academic =='دبلوم' || model.academic =='بكالوريوس' || model.academic =='ماجستير' ||model.academic =='دكتوراه'?Textbox("الاختصاص", Icon(Icons.apartment),purview):SizedBox(),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('عنوان السكن الحالي'),
+                        DropdownCity(context),
+                        Textbox("المنطقة", Icon(Mdi.map),area),
+                        Textbox(
+                            "اقرب نقطة دالة", Icon(Icons.add_location_rounded),nearest_point),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('العمل السابق والديانة'),
+                        DropdownReligion(context),
+                        Textbox("العمل السابق", Icon(Icons.info),last_job),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('المعلمومات الشخصية'),
+                        DropdownIdType(context),
+                        model.id_type=='البطاقة الوطنية الموحدة'?Textbox("رقم البطاقة", Icon(Icons.credit_card),nat_id_no):SizedBox(),
+                        model.id_type=='البطاقة الوطنية الموحدة'?Textbox("جهة الاصدار", Icon(Icons.info),nat_id_issuer):SizedBox(),
+                        model.id_type=='هوية الاحوال المدنية'?Textbox("رقم الهوية", Icon(Icons.credit_card),civil_id_no):SizedBox(),
+                        model.id_type=='هوية الاحوال المدنية'?Textbox("تاريخ الاصدار ", Icon(Icons.credit_card),civil_issuer_date):SizedBox(),
+                        model.id_type=='هوية الاحوال المدنية'?Textbox("رقم الصحيفة", Icon(Icons.info),civil_id_newspaper_no):SizedBox(),
+                        model.id_type=='هوية الاحوال المدنية'?Textbox("رقم السجل", Icon(Icons.info),civil_record_no):SizedBox(),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'? Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('بطاقة السكن'),
+                        Textbox("رقم البطاقة", Icon(Icons.credit_card),residence_card_no),
+                        DatePicker(residence_card_date.text, "تاريخ الاصدار"),
+                      ],
+                    ),
+                  ):SizedBox(),
+                  model.complaint_type=='مخصصات'?Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(3.0),
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.black12)),
+                    child: Column(
+                      children: <Widget>[
+                        Text('اضافة مستمسكات'),
+                        Divider(
+                          thickness: 1,
+                        ),
+                        SetDoc("وجه جنسية او هوية المقاتل", "https://hfd.gov.iq/img/1.0d223e24.png", soldier_id_front, pickCameraSoldierIdFront, pickGallerySoldierIdFront),
+                        SetDoc("ظهر جنسية او هوية المقاتل", "https://hfd.gov.iq/img/2.86098a9a.png", soldier_id_back, pickCameraSoldierIdBack, pickGallerySoldierIdBack),
+                        model.marital_state =='متزوج/ة' && int.parse(model.wifes_count) > 0?SetDoc("وجه جنسية او هوية الزوج/ة", "https://hfd.gov.iq/img/1.0d223e24.png", husband_id_front, pickCameraHusbandIdFront, pickGalleryHusbandIdFront):SizedBox(),
+                        model.marital_state =='متزوج/ة' && int.parse(model.wifes_count) > 0?SetDoc("وجه جنسية او هوية الزوج/ة", "https://hfd.gov.iq/img/2.86098a9a.png", husband_id_back, pickCameraHusbandIdBack, pickGalleryHusbandIdBack):SizedBox(),
+                        int.parse(model.children_count) > 0 ?SetDoc("وجه جنسية او هوية الطفل", "https://hfd.gov.iq/img/1.0d223e24.png", child_id_front, pickCameraChildIdFront, pickGalleryChildIdFront):SizedBox(),
+                        int.parse(model.children_count) > 0?SetDoc("ظهر جنسية او هوية الطفل", "https://hfd.gov.iq/img/2.86098a9a.png", child_id_back, pickCameraChildIdBack, pickGalleryChildIdBack):SizedBox(),
+                        SetDoc("وجه بطاقة السكن", "https://hfd.gov.iq/img/4.486ee720.png", resident_card_front, pickCameraResidenceFront, pickGalleryResidenceFront),
+                        SetDoc("ظهر بطاقة السكن", "https://hfd.gov.iq/img/6.1ded7f67.png", resident_card_back, pickCameraResidenceBack, pickGalleryResidenceBack),
+                        SetDoc("عقد الزواج", "https://hfd.gov.iq/img/3.aca66164.png", contract, pickCameraContract, pickGalleryContract),
+                        SetDoc("البطاقة التموينية", "https://hfd.gov.iq/img/5.022d1913.png", long_card, pickCameraLongCard, pickGalleryLongCard),
+
+                      ],
+                    ),
+                  ):SizedBox(),
+                  Container(
+                    color: Colors.blue,
+                    width: double.infinity,
+                    margin: EdgeInsets.all(30),
+                    padding: EdgeInsets.all(5),
+                    child: RaisedButton(
+                      color: Colors.blue,
+                      child: sending==false?Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.send,color: Colors.white),
+                          Text("ارسال",style: TextStyle(fontSize: 18,color: Colors.white),)
+                        ],
+                      ):CircularProgressIndicator(color: Colors.white,),
+                      onPressed: () {
+                        print(model.academic);
+
+                        if (_formKey.currentState!.validate()) {
+                          sendComplaint();
+                        }
+                      },
+                    ),
+                  )
+                ],):SizedBox()
+
               ],
             ),
           )),
@@ -423,7 +456,7 @@ class _scafState extends State<scaf> {
   Container DropdownComplaintType(BuildContext context) {
     var model = Provider.of<Model>(context);
     return Container(
-        width:300,
+        width:double.infinity,
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(3.0),
         decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
@@ -463,7 +496,7 @@ class _scafState extends State<scaf> {
   Container DropdownPlaceBirthday(BuildContext context) {
     var model = Provider.of<Model>(context);
     return Container(
-        width:300,
+        width:double.infinity,
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(3.0),
         decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
@@ -512,6 +545,290 @@ class _scafState extends State<scaf> {
         )
     );
   }
+  Container DropdownWifesCount(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.wifes_count,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("عدد الزوجات"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeWifesCount(newValue);
+            });
+          },
+          items: <String>[
+            '0','1','2','3','4'
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownChildrenCount(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.children_count,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("عدد الاطفال"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeChildrenCount(newValue);
+            });
+          },
+          items: <String>[
+            '0','1','2','3','4','5','6','7','8','9','10','11','12'
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownCity(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.city,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("المحافظة الحالية"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeCity(newValue);
+            });
+          },
+          items: <String>[
+            'بغداد',
+            'بابل',
+            'كربلاء',
+            'الأنبار',
+            'البصرة',
+            'دهوك',
+            'القادسية',
+            'ديالى',
+            'أربيل',
+            'ذي قار',
+            'السليمانية',
+            'صلاح الدين',
+            'كركوك',
+            'المثنى',
+            'ميسان',
+            'النجف',
+            'نينوى',
+            'واسط',
+
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownMaritalState(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.marital_state,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("الحالة الزوجية"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeMaritalState(newValue);
+              print(newValue);
+            });
+          },
+          items: <String>[
+            'اعزب/باكر',
+            'متزوج/ة',
+            'مطلق/ة',
+            'ارمل/ة',
+
+
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownLearn(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.academic,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("الشهادة"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeLearn(newValue);
+            });
+          },
+          items: <String>[
+            'أمي',
+            'يقرأ ويكتب',
+            'ابندائية',
+            'متوسطة',
+            'اعدادية',
+            'حوزوي',
+            'دبلوم',
+            'بكالوريوس',
+            'ماجستير',
+            'دكتوراه',
+
+
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownReligion(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.religion,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("الديانة"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeReligion(newValue);
+            });
+          },
+          items: <String>[
+            'مسلم',
+            'مسيحي',
+            'صابئي',
+            'ايزيدي',
+            'شبك',
+            'اخرى',
+
+
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+  Container DropdownIdType(BuildContext context) {
+    var model = Provider.of<Model>(context);
+    return Container(
+        width:double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(border: Border.all(color: Colors.black12)),
+        child: DropdownButton<String>(
+          value: model.id_type,
+          elevation: 16,
+          alignment: Alignment.center,
+          style: const TextStyle(color: Colors.green,fontSize: 18,),
+          hint: Text("نوع الهوية"),
+
+          underline: Container(
+            height: 0,
+            alignment: Alignment.center,
+          ),
+          onChanged: (String? newValue) {
+            setState(() {
+              model.changeIdType(newValue);
+            });
+          },
+          items: <String>[
+            'هوية الاحوال المدنية',
+            'البطاقة الوطنية الموحدة',
+
+
+          ].map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        )
+    );
+  }
+
   Container DatePicker(dynamic _value, String _title) {
     return Container(
       margin: const EdgeInsets.all(10),
@@ -536,43 +853,46 @@ class _scafState extends State<scaf> {
     );
   }
 
-  Container SetDoc(String _title, String _url,dynamic doc,Future pickCamera(),Future pickGallery()) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
-        border: Border.all(width: 1)
-      ),
-      width: double.infinity,
-      padding: EdgeInsets.all(5),
-      child: Row(
-        children: <Widget>[
-          Expanded(child: Container(
-            height: 80,
-            padding: EdgeInsets.all(10),
-            width: MediaQuery.of(context).size.width /3.2,
-            child: doc!=""?Image.file(doc):Image.network(_url),
-          ),),
-          Container(
-            child: Text(_title),
-            width: MediaQuery.of(context).size.width /3.2,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width /3.2,
-            child: Column(
-              children: <Widget>[
-                IconButton(onPressed: (){
-                  pickCamera();
-                }, icon: Icon(Icons.camera_alt_rounded)),
-                IconButton(onPressed: (){
-                  pickGallery();
-                }, icon: Icon(Icons.image)),
-              ],
+  Column SetDoc(String _title, String _url,File doc,Future pickCamera(),Future pickGallery()) {
+    return Column(children: <Widget>[
+      Container(
+        margin: EdgeInsets.only(top: 10),
+        decoration: BoxDecoration(
+            border: Border.all(width: 1)
+        ),
+        width: double.infinity,
+        padding: EdgeInsets.all(5),
+        child: Row(
+          children: <Widget>[
+            Expanded(child: Container(
+              height: 80,
+              padding: EdgeInsets.all(10),
+              width: MediaQuery.of(context).size.width /3.2,
+              child: doc.path!=""?Image.file(doc):Image.network(_url),
+            ),),
+            Container(
+              child: Text(_title),
+              width: MediaQuery.of(context).size.width /3.2,
             ),
-          ),
+            Container(
+              width: MediaQuery.of(context).size.width /3.2,
+              child: Column(
+                children: <Widget>[
+                  IconButton(onPressed: (){
+                    pickCamera();
+                  }, icon: Icon(Icons.camera_alt_rounded)),
+                  IconButton(onPressed: (){
+                    pickGallery();
+                  }, icon: Icon(Icons.image)),
+                ],
+              ),
+            ),
 
-        ],
+          ],
+        ),
       ),
-    );
+      Divider(thickness: 1,)
+    ],);
   }
   Container Textbox(String _label, Icon _icon , TextEditingController _controller) {
     return Container(
@@ -598,82 +918,110 @@ class _scafState extends State<scaf> {
 
   sendComplaint() async
   {
-    var model = Provider.of<Model>(context,listen: false);
-      for(int i = 0 ; i<=6 ; i++)
+   try{
+     setState(() {
+       sending = true;
+     });
+     var model = Provider.of<Model>(context,listen: false);
+     // for(int i = 0 ; i<=6 ; i++)
+     // {
+     //   Codec<String, String> stringToBase64 = utf8.fuse(base64);
+     //   complaint_soldier_qi.text = stringToBase64.encode(complaint_soldier_qi.text);
+     // }
+     //complaint_soldier_qi.text = "6330153529002144";
+     var url =Server.con + "/api-mobile/services/send-complaints";
+
+     var request = http.MultipartRequest('POST',Uri.parse(url));
+     request.fields['complaint_soldier_qi'] = complaint_soldier_qi.text;
+     request.fields['complaint_type'] = model.complaint_type;
+     request.fields['complaint_soldier_name'] = complaint_soldier_name.text;
+     request.fields['mother_name'] = mother_name.text;
+     request.fields['formation'] = formation.text;
+     request.fields['complaint_soldier_phone'] = complaint_soldier_phone.text;
+     request.fields['place_birthday'] =model.place_birthday;
+     request.fields['birthday_date'] =birthday_date.text;
+     request.fields['marital_state'] =model.marital_state;
+     request.fields['husband_name'] =husband_name.text;
+     request.fields['job_state'] =job_state.text;
+     request.fields['wifes_count'] =model.wifes_count;
+     request.fields['children_count'] =model.children_count;
+     request.fields['academic'] =model.academic;
+     request.fields['purview'] =academic.text;
+     request.fields['university'] =university.text;
+     request.fields['college'] =college.text;
+     request.fields['section'] =section.text;
+     request.fields['city'] =model.city;
+     request.fields['area'] =area.text;
+     request.fields['nearest_point'] =nearest_point.text;
+     request.fields['last_job'] =last_job.text;
+     request.fields['religion'] =model.religion;
+     request.fields['id_type'] =model.id_type;
+     request.fields['nat_id_no'] =nat_id_no.text;
+     request.fields['nat_id_date'] =nat_id_date.text;
+     request.fields['nat_id_issuer'] =nat_id_issuer.text;
+     request.fields['civil_id_no'] =civil_id_no.text;
+     request.fields['civil_id_newspaper_no'] =civil_id_newspaper_no.text;
+     request.fields['civil_record_no'] =civil_record_no.text;
+     request.fields['civil_issuer_date'] =civil_issuer_date.text;
+     request.fields['residence_card_no'] =residence_card_no.text;
+     request.fields['residence_card_date'] =model.residence_card_date;
+
+
+
+     request.files.add(await http.MultipartFile.fromPath("soldier_id_front",soldier_id_front.path));
+     request.files.add(await http.MultipartFile.fromPath("soldier_id_back", soldier_id_back.path));
+     if(model.marital_state =='متزوج/ة')
+     {
+       request.files.add(await http.MultipartFile.fromPath("husband_id_front", husband_id_front.path));
+       request.files.add(await http.MultipartFile.fromPath("husband_id_back", husband_id_back.path));
+     }
+     if(int.parse(model.children_count) > 0)
+     {
+       request.files.add(await http.MultipartFile.fromPath("child_id_front", child_id_front.path));
+       request.files.add(await http.MultipartFile.fromPath("child_id_back", child_id_back.path));
+     }
+
+
+     request.files.add(await http.MultipartFile.fromPath("residence_card_front", resident_card_front.path));
+     request.files.add(await http.MultipartFile.fromPath("residence_card_back", resident_card_back.path));
+     request.files.add(await http.MultipartFile.fromPath("contract", contract.path));
+     request.files.add(await http.MultipartFile.fromPath("long_card", long_card.path));
+
+
+     request.headers.addAll({
+       'Content-Type': 'application/json; charset=UTF-8'
+     });
+
+     var streamedResponse = await request.send();
+     var response = await http.Response.fromStream(streamedResponse);
+
+     print(response.body);
+     final res = jsonDecode(response.body);
+     print(res);
+     setState(() {
+        msg = res["msg"];
+     });
+     if(res["msg"] =="تم الارسال بنجاح")
       {
-        Codec<String, String> stringToBase64 = utf8.fuse(base64);
-        complaint_soldier_qi.text = stringToBase64.encode(complaint_soldier_qi.text);
+        Navigator.of(context).pushNamed("send_complaint_success");
       }
-      complaint_soldier_qi.text = "6330153145574658";
-      var url =Server.con + "/api-mobile/services/send-complaints";
-      var request = http.MultipartRequest('POST',Uri.parse(url));
-      request.fields['complaint_soldier_qi'] = complaint_soldier_qi.text;
-      request.fields['complaint_type'] = model.complaint_type;
-      request.fields['complaint_soldier_name'] = complaint_soldier_name.text;
-      request.fields['mother_name'] = mother_name.text;
-      request.fields['formation'] = formation.text;
-      request.fields['complaint_soldier_phone'] = complaint_soldier_phone.text;
-      request.fields['place_birthday'] =model.place_birthday;
-      request.fields['birthday_date'] =model.birthday_date;
-      request.fields['marital_state'] =model.marital_state;
-      request.fields['husband_name'] =husband_name.text;
-      request.fields['job_state'] =job_state.text;
-      request.fields['wifes_count'] =wifes_count.text;
-      request.fields['children_count'] =children_count.text;
-      request.fields['academic'] =academic.text;
-      request.fields['purview'] =academic.text;
-      request.fields['university'] =university.text;
-      request.fields['college'] =college.text;
-      request.fields['section'] =section.text;
-      request.fields['city'] =city.text;
-      request.fields['area'] =area.text;
-      request.fields['nearest_point'] =nearest_point.text;
-      request.fields['last_job'] =last_job.text;
-      request.fields['religion'] =religion.text;
-      request.fields['nat_id_no'] =nat_id_no.text;
-      request.fields['nat_id_date'] =nat_id_date.text;
-      request.fields['nat_id_issuer'] =nat_id_issuer.text;
-      request.fields['civil_id_no'] =civil_id_no.text;
-      request.fields['civil_id_newspaper_no'] =civil_id_newspaper_no.text;
-      request.fields['civil_record_no'] =civil_record_no.text;
-      request.fields['civil_issuer_date'] =civil_issuer_date.text;
-      request.fields['residence_card_no'] =residence_card_no.text;
-      request.fields['residence_card_date'] =residence_card_date.text;
-
-
-      request.files.add(await http.MultipartFile.fromPath("soldier_id_front",soldier_id_front!= null?soldier_id_front!.path:""));
-      request.files.add(await http.MultipartFile.fromPath("soldier_id_back", soldier_id_back!.path));
-      request.files.add(await http.MultipartFile.fromPath("husband_id_front", husband_id_front!.path));
-      request.files.add(await http.MultipartFile.fromPath("husband_id_back", husband_id_back!.path));
-      request.files.add(await http.MultipartFile.fromPath("child_id_front", child_id_front!.path));
-      request.files.add(await http.MultipartFile.fromPath("child_id_back", child_id_back!.path));
-      request.files.add(await http.MultipartFile.fromPath("residence_card_front", resident_card_front!.path));
-      request.files.add(await http.MultipartFile.fromPath("residence_card_back", resident_card_back!.path));
-      request.files.add(await http.MultipartFile.fromPath("contract", contract!.path));
-      request.files.add(await http.MultipartFile.fromPath("long_card", long_card!.path));
-
-
-      request.headers.addAll({
-        'Content-Type': 'application/json; charset=UTF-8'
-      });
-
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
-      print(response.body);
-      final result = jsonDecode(response.body);
-// as Map<String, dynamic>
-      print(result);
-      //var res = jsonDecode(response.body);
-      setState(() {
-       // msg = res["msg"];
-      });
-      // if(res["msg"] =="تم الارسال بنجاح")
-      //  {
-      //    Navigator.of(context).pushNamed("send_complaint_success");
-      //  }
-      // msg = response.body;
+     // msg = response.body;
+     Fluttertoast.showToast(
+       msg: res["msg"],
+       toastLength: Toast.LENGTH_LONG,
+       gravity: ToastGravity.CENTER,
+       timeInSecForIosWeb: 1,
+       backgroundColor: Colors.red,
+       textColor: Colors.white,
+       fontSize: 18,
+     );
+     setState(() {
+       sending = false;
+     });
+   }catch(ex)
+    {
       Fluttertoast.showToast(
-        msg: "ttt",
+        msg: ex.toString(),
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
@@ -681,7 +1029,10 @@ class _scafState extends State<scaf> {
         textColor: Colors.white,
         fontSize: 18,
       );
-      sending = false;
+      setState(() {
+        sending = false;
+      });
+    }
   }
 
 
