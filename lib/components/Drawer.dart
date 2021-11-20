@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hfd_flutter/Colors/myColors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././Store.dart';
 import 'package:badges/badges.dart';
@@ -128,7 +129,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
     ],
-    ),color: Colors.green,)
+    ),color: MyColors().primary,)
       ,);
   }
 }

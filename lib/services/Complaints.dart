@@ -1,11 +1,14 @@
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hfd_flutter/Colors/myColors.dart';
 import 'package:hfd_flutter/Server.dart';
 import 'package:hfd_flutter/services/Lists/ComplaintTypesList.dart';
 import 'package:hfd_flutter/services/Lists/Lists.dart';
 import 'package:hfd_flutter/services/Store/ComplaintStore.dart';
 import 'package:smart_select/smart_select.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -13,7 +16,6 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'Lists/CitiesList.dart';
 import 'package:mdi/mdi.dart';
-import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 
@@ -251,8 +253,10 @@ class _scafState extends State<scaf> {
 
     var model = Provider.of<Model>(context);
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("شكاوي المجاهدين"),
+        backgroundColor: MyColors().primary,
       ),
       body: Form(
           key: _formKey,
@@ -393,7 +397,7 @@ class _scafState extends State<scaf> {
                       children: <Widget>[
                         Text('بطاقة السكن'),
                         Textbox("رقم البطاقة", Icon(Icons.credit_card),residence_card_no),
-                        DatePicker(residence_card_date.text, "تاريخ الاصدار"),
+                       // DatePicker(residence_card_date.text, "تاريخ الاصدار"),
                       ],
                     ),
                   ):SizedBox(),
@@ -416,7 +420,7 @@ class _scafState extends State<scaf> {
                         int.parse(model.children_count) > 0?SetDoc("ظهر جنسية او هوية الطفل", "https://hfd.gov.iq/img/2.86098a9a.png", child_id_back, pickCameraChildIdBack, pickGalleryChildIdBack):SizedBox(),
                         SetDoc("وجه بطاقة السكن", "https://hfd.gov.iq/img/4.486ee720.png", resident_card_front, pickCameraResidenceFront, pickGalleryResidenceFront),
                         SetDoc("ظهر بطاقة السكن", "https://hfd.gov.iq/img/6.1ded7f67.png", resident_card_back, pickCameraResidenceBack, pickGalleryResidenceBack),
-                        SetDoc("عقد الزواج", "https://hfd.gov.iq/img/3.aca66164.png", contract, pickCameraContract, pickGalleryContract),
+                        model.marital_state =='متزوج/ة'?SetDoc("عقد الزواج", "https://hfd.gov.iq/img/3.aca66164.png", contract, pickCameraContract, pickGalleryContract):SizedBox(),
                         SetDoc("البطاقة التموينية", "https://hfd.gov.iq/img/5.022d1913.png", long_card, pickCameraLongCard, pickGalleryLongCard),
 
                       ],
@@ -830,7 +834,8 @@ class _scafState extends State<scaf> {
   }
 
   Container DatePicker(dynamic _value, String _title) {
-    return Container(
+    return
+      Container(
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(3.0),
       decoration: BoxDecoration(border: Border.all(color: Colors.black)),
@@ -921,8 +926,63 @@ class _scafState extends State<scaf> {
    try{
      setState(() {
        sending = true;
+
      });
+
      var model = Provider.of<Model>(context,listen: false);
+     if(soldier_id_front.path =='' || soldier_id_back.path =='' || resident_card_front.path=='' || resident_card_back.path=='' || long_card.path=='')
+     {
+       //print('stop');
+       setState(() {
+         sending = false;
+         Fluttertoast.showToast(
+           msg: "يرجى  رفع المستمسكات الاتية (هوية ، بطاقة سكن ،البطاقة تموينية )",
+           toastLength: Toast.LENGTH_LONG,
+           gravity: ToastGravity.CENTER,
+           timeInSecForIosWeb: 1,
+           backgroundColor: Colors.red,
+           textColor: Colors.white,
+           fontSize: 18,
+         );
+       });
+       return false;
+     }
+     if(model.marital_state =='متزوج/ة' && husband_id_front.path =='' || husband_id_back.path =='' || contract.path=='')
+       {
+         //print('stop');
+         setState(() {
+           sending = false;
+           Fluttertoast.showToast(
+             msg: "يرجى التأكد من رفع مستمسكات الزوجة وعقد الزواج",
+             toastLength: Toast.LENGTH_LONG,
+             gravity: ToastGravity.CENTER,
+             timeInSecForIosWeb: 1,
+             backgroundColor: Colors.red,
+             textColor: Colors.white,
+             fontSize: 18,
+           );
+         });
+         return false;
+       }
+     if(int.parse(model.children_count) != 0 && child_id_front.path =='' || child_id_back.path =='')
+     {
+       //print('stop');
+       setState(() {
+         sending = false;
+         Fluttertoast.showToast(
+           msg: "يرجى التأكد من رفع مستمسكات الاطفال",
+           toastLength: Toast.LENGTH_LONG,
+           gravity: ToastGravity.CENTER,
+           timeInSecForIosWeb: 1,
+           backgroundColor: Colors.red,
+           textColor: Colors.white,
+           fontSize: 18,
+         );
+
+       });
+       return false;
+     }
+
      // for(int i = 0 ; i<=6 ; i++)
      // {
      //   Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -974,6 +1034,7 @@ class _scafState extends State<scaf> {
      {
        request.files.add(await http.MultipartFile.fromPath("husband_id_front", husband_id_front.path));
        request.files.add(await http.MultipartFile.fromPath("husband_id_back", husband_id_back.path));
+       request.files.add(await http.MultipartFile.fromPath("contract", contract.path));
      }
      if(int.parse(model.children_count) > 0)
      {
@@ -984,7 +1045,7 @@ class _scafState extends State<scaf> {
 
      request.files.add(await http.MultipartFile.fromPath("residence_card_front", resident_card_front.path));
      request.files.add(await http.MultipartFile.fromPath("residence_card_back", resident_card_back.path));
-     request.files.add(await http.MultipartFile.fromPath("contract", contract.path));
+
      request.files.add(await http.MultipartFile.fromPath("long_card", long_card.path));
 
 

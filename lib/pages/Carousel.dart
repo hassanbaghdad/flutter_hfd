@@ -1,3 +1,4 @@
+
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -17,11 +18,12 @@ class _MyCarouselState extends State<MyCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    var h = MediaQuery.of(context).size.height / 3;
 
     return
       Container(
         child: Container(
-          height: 230,
+          height: h,
             child: FutureBuilder(
                 future: Posts().get_posts(),
                 builder: (BuildContext context ,AsyncSnapshot snapshot)
@@ -44,23 +46,22 @@ class _MyCarouselState extends State<MyCarousel> {
                                   errorWidget: (context, url, error) => new Icon(Icons.error),
                                   fadeInCurve:Curves.easeIn,
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 )
                                 )
 
                                   ,
                                   Positioned(child: Container(
-                                    height: 40,
+                                    height: 50,
                                     width: double.infinity,
-                                    padding: EdgeInsets.all(10),
                                     //color: Colors.red.withOpacity(0.8),
-                                    margin: EdgeInsets.fromLTRB(20,140,0,0),
+                                    margin: EdgeInsets.fromLTRB(0,h-50,0,0),
                                     child: Row(children: <Widget>[
                                       Icon(Icons.arrow_left_rounded,textDirection: TextDirection.ltr,size: 25,color: Colors.white,),
                                       Expanded(child: Text(snapshot.data[x]["post_title"],style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white),textAlign: TextAlign.right,))
                                     ],),
                                     decoration: BoxDecoration(
-                                        color: Colors.red.withOpacity(0.8),
+                                        color: Colors.black.withOpacity(0.7),
                                     ),
                                   )
                                   ),
@@ -89,25 +90,25 @@ class _MyCarouselState extends State<MyCarousel> {
                           child: Card(
                             child: Container(
                               child: SizedBox(
-                                height: 200.0,
+                                //height: 200.0,
                                 width: double.infinity,
                                 child: Carousel(
-                                  boxFit: BoxFit.cover,
-                                  autoplay: false,
+                                  boxFit: BoxFit.fill,
+                                  autoplay: true,
                                   animationCurve: Curves.fastOutSlowIn,
-                                  animationDuration: Duration(milliseconds: 1000),
+                                  animationDuration: Duration(milliseconds: 1500),
                                   dotSize: 6.0,
                                   dotIncreasedColor: Color(0xFFFF335C),
                                   dotBgColor: Colors.transparent,
                                   dotPosition: DotPosition.topRight,
                                   dotVerticalPadding: 10.0,
                                   showIndicator: false,
-                                  indicatorBgPadding: 7.0,
+                                  indicatorBgPadding: 2,
                                   images: list,
 
                                 ),
                               ),
-                              padding: EdgeInsets.all(10),
+
                             ),
                             elevation: 10,
                           ),

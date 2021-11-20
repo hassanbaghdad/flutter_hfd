@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hfd_flutter/Colors/myColors.dart';
 import 'package:hfd_flutter/Server.dart';
 import 'package:hfd_flutter/pages/RoutesParameters.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -24,6 +25,7 @@ class _ViewPostState extends State<ViewPost> {
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
       appBar: AppBar(
         title: Text("$title"),
+        backgroundColor: MyColors().primary,
       ),
       body:
       Container(child:

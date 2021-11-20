@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hfd_flutter/Colors/myColors.dart';
 import 'package:hfd_flutter/pages/Posts.dart';
 import 'package:hfd_flutter/pages/PostsList.dart';
 import '../components/Drawer.dart';
@@ -14,6 +15,7 @@ class Home extends StatelessWidget {
     Scaffold(
       appBar: AppBar(
         title: Text("الصفحة الرئيسية"),
+        backgroundColor: MyColors().primary,
         centerTitle: true,
         actions: <Widget>[
           Container(
@@ -42,9 +44,11 @@ class Home extends StatelessWidget {
 
           MyCarousel(),
           Container(
+
             margin: EdgeInsets.fromLTRB(0, 15, 0, 10),
             padding: EdgeInsets.all(10),
-            child: Text("اخر الاخبار",style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),),color: Colors.blue,
+            child: Text("اخر الاخبار",style: TextStyle(fontSize: 20,color: Colors.white,fontWeight: FontWeight.bold),)
+            ,color: MyColors().primary,
             width: double.infinity,),
           Expanded(child: PostsList(),)
 

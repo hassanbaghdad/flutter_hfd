@@ -16,12 +16,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart' as intl;
 
 
-class Salary extends StatefulWidget {
+class MartialAndChildren extends StatefulWidget {
   @override
-  _SalaryState createState() => _SalaryState();
+  _MartialAndChildrenState createState() => _MartialAndChildrenState();
 }
 
-class _SalaryState extends State<Salary> {
+class _MartialAndChildrenState extends State<MartialAndChildren> {
   Container aDatePiker(BuildContext context, String _label , TextEditingController _controller) {
     return Container(
         child:TextButton(
@@ -64,23 +64,20 @@ class _SalaryState extends State<Salary> {
   TextEditingController date = new TextEditingController();
 
   TextEditingController qi = new TextEditingController();
-
   int _year = DateTime.now().year;
   int _month = DateTime.now().month;
   final formatCurrency = intl.NumberFormat.simpleCurrency(name: '',locale: 'ar_IQ',decimalDigits: 0);
-  int _salary = 0;
+  String _marital_money = "" ;
+  String _children_money = "" ;
   bool loading = false;
+  bool loaded = false;
   @override
   Widget build(BuildContext context) {
-
-
-
     getQi();
-
 
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
       appBar: AppBar(
-        title: Text("استعلام عن راتب"),
+        title: Text("استعلام عن مخصصات زوجية واطفال "),
         backgroundColor: MyColors().primary,
       ),
       body: Container(padding:EdgeInsets.all(10),child: Form(child:ListView(children: <Widget>[
@@ -89,7 +86,6 @@ class _SalaryState extends State<Salary> {
         Container(
           padding: EdgeInsets.all(10),
           child: TextFormField(
-
           controller: qi,
           decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -118,21 +114,24 @@ class _SalaryState extends State<Salary> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(margin: EdgeInsets.only(left: 10),child: Icon(Icons.remove_red_eye,color: Colors.white,size: 30,),),
-              Text("عرض الراتب",style: TextStyle(color: Colors.white,fontSize: 20),),
+              Text("عرض المخصصات",style: TextStyle(color: MyColors().font,fontSize: 20),),
             ],
           ):CircularProgressIndicator(color: Colors.white,),
           onPressed: (){
-            get_salary(qi.text);
+            get_marital(qi.text);
           },
         ),),
 
 
-              _salary!=0?Center(child: Container(
+              loaded?Center(child: Container(
                 decoration: BoxDecoration(border: Border.all(width: 1),borderRadius: BorderRadius.circular(10)),
-                child: Text("${formatCurrency.format(_salary)} دينار ",style: TextStyle(fontSize: 20)),
+                child: Column(children: [
+                  Text("$_marital_money",style: TextStyle(fontSize: 20)),
+                  Text("$_children_money",style: TextStyle(fontSize: 20)),
+
+                ],),
                 padding: EdgeInsets.all(10),
                 margin: EdgeInsets.all(40),
-
               ),):SizedBox()
 
 
@@ -141,18 +140,19 @@ class _SalaryState extends State<Salary> {
       )
       ),
     ));
-
   }
-  get_salary(String _qi) async{
+  get_marital(String _qi) async{
     // var qi ="6330134305825080";
-    print("$_year");
+
     try{
       setState(() {
-        _salary = 0;
+        _marital_money = "";
+        _children_money = "";
+        loading = true;
+        loaded = false;
       });
-      loading = true;
-      var url =Server.con + "/api-mobile/services/get-salary";
-      var token = Store().getToken();
+
+      var url =Server.con + "/api-mobile/services/get-marital-and-children";
       var response = await http.post(Uri.parse(url),body: jsonEncode(<String, dynamic>{
         'qi':_qi,
         'month':_month,
@@ -166,7 +166,10 @@ class _SalaryState extends State<Salary> {
       {
         var res = jsonDecode(response.body);
         setState(() {
-          _salary = int.parse(res["salary"].toString());
+          _marital_money = res["marital_money"].toString();
+          _children_money = res["children_money"].toString();
+          loaded = true;
+          loading = false;
         });
 
       }else{

@@ -16,12 +16,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart' as intl;
 
 
-class Salary extends StatefulWidget {
+class Deductions extends StatefulWidget {
   @override
-  _SalaryState createState() => _SalaryState();
+  _DeductionsState createState() => _DeductionsState();
 }
 
-class _SalaryState extends State<Salary> {
+class _DeductionsState extends State<Deductions> {
   Container aDatePiker(BuildContext context, String _label , TextEditingController _controller) {
     return Container(
         child:TextButton(
@@ -64,23 +64,19 @@ class _SalaryState extends State<Salary> {
   TextEditingController date = new TextEditingController();
 
   TextEditingController qi = new TextEditingController();
-
   int _year = DateTime.now().year;
   int _month = DateTime.now().month;
   final formatCurrency = intl.NumberFormat.simpleCurrency(name: '',locale: 'ar_IQ',decimalDigits: 0);
-  int _salary = 0;
+  int _deduction = 0 ;
   bool loading = false;
+  bool loaded = false;
   @override
   Widget build(BuildContext context) {
-
-
-
     getQi();
-
 
     return Directionality(textDirection: TextDirection.rtl, child: Scaffold(
       appBar: AppBar(
-        title: Text("استعلام عن راتب"),
+        title: Text("استعلام عن نفقة او دين"),
         backgroundColor: MyColors().primary,
       ),
       body: Container(padding:EdgeInsets.all(10),child: Form(child:ListView(children: <Widget>[
@@ -89,7 +85,6 @@ class _SalaryState extends State<Salary> {
         Container(
           padding: EdgeInsets.all(10),
           child: TextFormField(
-
           controller: qi,
           decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -118,21 +113,20 @@ class _SalaryState extends State<Salary> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(margin: EdgeInsets.only(left: 10),child: Icon(Icons.remove_red_eye,color: Colors.white,size: 30,),),
-              Text("عرض الراتب",style: TextStyle(color: Colors.white,fontSize: 20),),
+              Text("عرض الاستقطاع",style: TextStyle(color: Colors.white,fontSize: 20),),
             ],
           ):CircularProgressIndicator(color: Colors.white,),
           onPressed: (){
-            get_salary(qi.text);
+            get_deductions(qi.text);
           },
         ),),
 
 
-              _salary!=0?Center(child: Container(
+              loaded?Center(child: Container(
                 decoration: BoxDecoration(border: Border.all(width: 1),borderRadius: BorderRadius.circular(10)),
-                child: Text("${formatCurrency.format(_salary)} دينار ",style: TextStyle(fontSize: 20)),
+                child: _deduction!=0?Text("${formatCurrency.format(_deduction)} دينار ",style: TextStyle(fontSize: 20)):Text("لا يوجد استقطاع",style: TextStyle(fontSize: 20)),
                 padding: EdgeInsets.all(10),
                 margin: EdgeInsets.all(40),
-
               ),):SizedBox()
 
 
@@ -141,17 +135,16 @@ class _SalaryState extends State<Salary> {
       )
       ),
     ));
-
   }
-  get_salary(String _qi) async{
+  get_deductions(String _qi) async{
     // var qi ="6330134305825080";
-    print("$_year");
+
     try{
       setState(() {
-        _salary = 0;
+        _deduction = 0;
       });
       loading = true;
-      var url =Server.con + "/api-mobile/services/get-salary";
+      var url =Server.con + "/api-mobile/services/get-deduction";
       var token = Store().getToken();
       var response = await http.post(Uri.parse(url),body: jsonEncode(<String, dynamic>{
         'qi':_qi,
@@ -166,7 +159,8 @@ class _SalaryState extends State<Salary> {
       {
         var res = jsonDecode(response.body);
         setState(() {
-          _salary = int.parse(res["salary"].toString());
+          _deduction = int.parse(res["deduction"].toString());
+          loaded = true;
         });
 
       }else{

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "378797410574",
+    "project_id": "hfd-iraq",
+    "storage_bucket": "hfd-iraq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378797410574:android:c305fa6c3eb916331faf5f",
+        "android_client_info": {
+          "package_name": "com.fin.hfd_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378797410574-8i6nm2k9ajg6b8qemp2570ql5c15ngfd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOwHM22XMzdQswZdxuEWWDo1Ij0yZManY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378797410574-8i6nm2k9ajg6b8qemp2570ql5c15ngfd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
