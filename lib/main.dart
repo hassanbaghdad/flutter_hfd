@@ -12,6 +12,7 @@ import 'package:hfd_flutter/services/Salary.dart';
 import 'package:hfd_flutter/services/Store/ComplaintStore.dart';
 import 'package:hfd_flutter/services/Store/SendSuccess.dart';
 import 'package:hfd_flutter/services/absences.dart';
+import 'package:hfd_flutter/services/answers.dart';
 import 'package:hfd_flutter/services/deductions.dart';
 import 'package:hfd_flutter/services/food.dart';
 import 'package:hfd_flutter/services/sendComplaints.dart';
@@ -98,6 +99,9 @@ class _MyAppState extends State<MyApp> {
 
           'view':(context){
             return ViewPost();
+          },
+          'answers':(context){
+            return Answers();
           },
 
 

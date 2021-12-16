@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hfd_flutter/Colors/myColors.dart';
+import 'package:hfd_flutter/components/localStore.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '.././Store.dart';
 import 'package:badges/badges.dart';
@@ -50,86 +52,93 @@ class _MyDrawerState extends State<MyDrawer> {
 
 
   Widget build(BuildContext context) {
+
     get_login_state();
     return Drawer(child:
-    Container(child: ListView(children: <Widget>[
+    ChangeNotifierProvider(
+      create: (context)=>LocalStore(),
+      child: Container(
+          child:Container(child: ListView(children: <Widget>[
 
-      ListTile(
-        title: Text("الصفحة الرئيسية",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Icon(Icons.home,color: Colors.white,),
-        onTap: ()async{
-          Navigator.of(context).pushNamed("home");
+              ListTile(
+                title: Text("الصفحة الرئيسية",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                leading: Icon(Icons.home,color: Colors.white,),
+                onTap: ()async{
+                  Navigator.of(context).pushNamed("home");
 
-        },),
+                },),
 
-      ListTile(
-        title: Text("خدمات المقاتلين",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Icon(Icons.people_alt,color: Colors.white),
-        onTap: ()async{
-          Navigator.of(context).pushNamed("services");
+              ListTile(
+                title: Text("خدمات المقاتلين",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                leading: Icon(Icons.people_alt,color: Colors.white),
+                onTap: ()async{
+                  Navigator.of(context).pushNamed("services");
 
-        },),
-      ListTile(
-        title: Text("صندوق الوارد",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Badge(
-          badgeContent: Text('1',style: TextStyle(color: Colors.white),),
-          child: Icon(Icons.mail,color: Colors.white,),
+                },),
+              Consumer<LocalStore>(builder: (context, model, child) {
+                return ListTile(
+                  title: Text("صندوق الوارد",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                  leading: Badge(
+                    badgeContent: Text('${model.countAnswers}',style: TextStyle(color: Colors.white),),
+                    child: Icon(Icons.mail,color: Colors.white,),
+                  ),
+                  onTap: ()async{
+                    Navigator.of(context).pushNamed("answers");
 
-        ),
-        onTap: ()async{
-          Navigator.of(context).pushNamed("services");
-
-        },),
-
-
-      hasLogin?Column(children: <Widget>[
-        ListTile(
-          title: Text("لوحة التحكم",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-          leading: Icon(Icons.admin_panel_settings,color: Colors.white),
-          onTap: (){
-            Navigator.of(context).pushNamed("dashboard");
-          },
-        ),
-
-        ListTile(
-          title: Text("تسجيل الخروج",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-          leading: Icon(Icons.logout,color: Colors.white),
-          onTap: ()async{
-            await logout();
-
-          },
-        )
-      ]
+                  },);
+              },),
 
 
-      ):ListTile(
-        title: Text("تسجيل الدخول",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Icon(Icons.arrow_forward,color: Colors.white),
-        onTap: (){
-          Navigator.of(context).pushNamed("login");
-        },
+              hasLogin?Column(children: <Widget>[
+                ListTile(
+                  title: Text("لوحة التحكم",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                  leading: Icon(Icons.admin_panel_settings,color: Colors.white),
+                  onTap: (){
+                    Navigator.of(context).pushNamed("dashboard");
+                  },
+                ),
+
+                ListTile(
+                  title: Text("تسجيل الخروج",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                  leading: Icon(Icons.logout,color: Colors.white),
+                  onTap: ()async{
+                    await logout();
+
+                  },
+                )
+              ]
+
+
+              ):ListTile(
+                title: Text("تسجيل الدخول",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                leading: Icon(Icons.arrow_forward,color: Colors.white),
+                onTap: (){
+                  Navigator.of(context).pushNamed("login");
+                },
+              ),
+
+
+              ListTile(
+                title: Text("مشاركة التطبيق",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                leading: Icon(Icons.share,color: Colors.white),
+                onTap: ()async{
+                  Navigator.of(context).pushNamed("services");
+
+                },),
+
+              ListTile(
+                title: Text("تابعنا على",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
+                leading: Icon(Icons.phonelink_ring,color: Colors.white),
+                onTap: ()async{
+                  Navigator.of(context).pushNamed("services");
+
+                },),
+
+
+            ],
+            ),color: MyColors().primary,)
       ),
-
-
-      ListTile(
-        title: Text("مشاركة التطبيق",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Icon(Icons.share,color: Colors.white),
-        onTap: ()async{
-          Navigator.of(context).pushNamed("services");
-
-        },),
-
-      ListTile(
-        title: Text("تابعنا على",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),),
-        leading: Icon(Icons.phonelink_ring,color: Colors.white),
-        onTap: ()async{
-          Navigator.of(context).pushNamed("services");
-
-        },),
-
-
-    ],
-    ),color: MyColors().primary,)
+    )
       ,);
   }
 }

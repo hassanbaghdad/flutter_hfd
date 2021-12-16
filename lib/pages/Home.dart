@@ -2,6 +2,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hfd_flutter/Colors/myColors.dart';
+import 'package:hfd_flutter/Store.dart';
+import 'package:hfd_flutter/components/localStore.dart';
 import 'package:hfd_flutter/pages/Posts.dart';
 import 'package:hfd_flutter/pages/PostsList.dart';
 import '../components/Drawer.dart';
@@ -11,6 +13,7 @@ import 'package:badges/badges.dart';
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    LocalStore().getAnswersCount();
     return Directionality(textDirection: TextDirection.rtl, child:
     Scaffold(
       appBar: AppBar(
@@ -19,12 +22,7 @@ class Home extends StatelessWidget {
         centerTitle: true,
         actions: <Widget>[
           Container(
-              padding: EdgeInsets.all(15),
-              child:Badge(
-                badgeContent: Text('1',style: TextStyle(color: Colors.white),),
-                child: Icon(Icons.mail),
-
-              )
+              child: IconButton(icon:Icon(Icons.mail),onPressed: (){Navigator.of(context).pushNamed("answers");},),
           )
         ],
         leading:Builder(

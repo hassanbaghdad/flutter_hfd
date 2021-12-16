@@ -53,7 +53,7 @@ class Services extends StatelessWidget {
                   )
               ),
               onTap: (){
-                Navigator.of(context).pushNamed("complaints");
+                Navigator.of(context).pushNamed("answers");
               },
             ),
             aInkWell(context,"assets/complaint.png","تفقديم شكوى","complaints"),
